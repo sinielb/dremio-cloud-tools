@@ -369,7 +369,7 @@ distStorage:
     path: "/"
     authentication: "auto"
 
-    # If using serviceAccountKeys, uncomment the section below, referencing the values from
+    # If using serviceAccountKeys, uncomment the section below, referencing the values 
     # the service account credentials JSON file that you generated:
     #
     #credentials:
