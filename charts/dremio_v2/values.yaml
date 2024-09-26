@@ -38,8 +38,8 @@ coordinator:
   # CPU & Memory
   # Memory allocated to each coordinator, expressed in MB.
   # CPU allocated to each coordinator, expressed in CPU cores.
-  cpu: 15
-  memory: 122800
+  cpu: 2
+  memory: 4500
 
   # This count is used for slave coordinators only.
   # The total number of coordinators will always be count + 1.
@@ -50,7 +50,7 @@ coordinator:
   # Coordinator data volume size (applies to the master coordinator only).
   # In most managed Kubernetes environments (AKS, GKE, etc.), the size of the disk has a direct impact on
   # the provisioned and maximum performance of the disk.
-  volumeSize: 512Gi
+  volumeSize: 20Gi
 
   # Kubernetes Service Account
   # Uncomment below to use a custom Kubernetes service account for the coordinator.
@@ -76,7 +76,7 @@ coordinator:
   #extraVolumeMounts: []
 
   # Uncomment this value to use a different storage class for the coordinator.
-  #storageClass:
+  storageClass: db-storage-retain
 
   # Uncomment this value to use a different storage class for the coordinator logs.
   #logStorageClass:
@@ -152,17 +152,17 @@ executor:
   # CPU & Memory
   # Memory allocated to each executor, expressed in MB.
   # CPU allocated to each executor, expressed in CPU cores.
-  cpu: 15
-  memory: 122800
+  cpu: 1
+  memory: 4500
 
   # Engines
   # Engine names be 47 characters or less and be lowercase alphanumber characters or '-'.
   # Note: The number of executor pods will be the length of the array below * count.
   engines: ["default"]
-  count: 3
+  count: 1
 
   # Executor volume size.
-  volumeSize: 128Gi
+  volumeSize: 20Gi
 
   # Kubernetes Service Account
   # Uncomment below to use a custom Kubernetes service account for executors.
@@ -188,7 +188,7 @@ executor:
   #extraVolumeMounts: []
 
   # Uncomment this value to use a different storage class for executors.
-  #storageClass:
+  storageClass: db-storage-retain
 
   # Uncomment this value to use a different storage class for the coordinator logs.
   #logStorageClass:
@@ -200,7 +200,7 @@ executor:
   # Designed for use with NVMe storage devices, performance may be impacted when using
   # persistent volume storage that resides far from the physical node.
   cloudCache:
-    enabled: true
+    enabled: false
 
     # Uncomment this value to use a different storage class for C3.
     #storageClass:
@@ -213,8 +213,8 @@ executor:
     # - name: "dremio-default-c3"
     #   size: 100Gi
     #   storageClass: "local-nvme"
-    volumes:
-    - size: 100Gi
+    #volumes:
+    #- size: 100Gi
 
   # These values, when defined and not empty, override the provided shared annotations, labels, node selectors, or tolerations.
   # Uncomment only if you are trying to override the chart's shared values.
@@ -321,7 +321,7 @@ zookeeper:
   # CPU allocated to each zookeeper, expressed in CPU cores.
   cpu: 0.5
   memory: 1024
-  count: 3
+  count: 1
 
   volumeSize: 10Gi
 
@@ -330,7 +330,7 @@ zookeeper:
   #serviceAccount: ""
 
   # Uncomment this value to use a different storage class for Zookeeper.
-  #storageClass:
+  storageClass: db-storage-retain
 
   # These values, when defined, override the provided shared annotations, labels, node selectors, or tolerations.
   # Uncomment only if you are trying to override the chart's shared values.
@@ -351,7 +351,7 @@ distStorage:
   # azure: ADLS Gen 1, additional parameters required, see "azure" section.
   # azureStorage: Azure Storage Gen2, additional paramters required, see "azureStorage" section.
   # gcp: Google Cloud Storage, additional parameters required, see "gcp" section.
-  type: "local"
+  type: "aws"
 
   # Google Cloud Storage
   #
@@ -364,10 +364,10 @@ distStorage:
   #       a Kubernetes Service Accountfor Dremio with an associated workload identity that
   #       has access to the GCS bucket.
   # credentials: If using serviceAccountKeys authentication, uncomment the credentials section below.
-  gcp:
-    bucketName: "GCS Bucket Name"
-    path: "/"
-    authentication: "auto"
+  #gcp:
+    #bucketName: "GCS Bucket Name"
+    #path: "/"
+    #authentication: "auto"
 
     # If using serviceAccountKeys, uncomment the section below, referencing the values 
     # the service account credentials JSON file that you generated:
@@ -401,9 +401,9 @@ distStorage:
   #       Dremio does not support using an K8s service account based IAM role.
   # credentials: If using accessKeySecret authentication, uncomment the credentials section below.
   aws:
-    bucketName: "AWS Bucket Name"
-    path: "/"
-    authentication: "metadata"
+    bucketName: "dremiostorage"
+    path: "/data/"
+    authentication: "accessKeySecret"
     # If using accessKeySecret for authentication against S3, uncomment the lines below and use the values
     # to configure the appropriate credentials.
     #
@@ -432,13 +432,13 @@ distStorage:
   # https://docs.dremio.com/deployment/dist-store-config.html#azure-data-lake-storage-gen1
   #
   # datalakeStoreName: The ADLS Gen 1
-  azure:
-    datalakeStoreName: "Azure DataLake Store Name"
-    path: "/"
-    credentials:
-      applicationId: "Azure Application ID"
-      secret: "Azure Application Secret"
-      oauth2Endpoint: "Azure OAuth2 Endpoint"
+  #azure:
+    #datalakeStoreName: "Azure DataLake Store Name"
+    #path: "/"
+    #credentials:
+      #applicationId: "Azure Application ID"
+      #secret: "Azure Application Secret"
+      #oauth2Endpoint: "Azure OAuth2 Endpoint"
 
     # Extra Properties
     # Use the extra properties block to provide additional parameters to configure the distributed
@@ -458,12 +458,12 @@ distStorage:
   # filesystem: The name of the blob container to use within the storage account.
   # path: The path, relative to the filesystem, to create Dremio's directories.
   # credentials:
-  azureStorage:
-    accountName: "Azure Storage Account Name"
-    filesystem: "Azure Storage Account Blob Container"
-    path: "/"
-    credentials:
-      accessKey: "Azure Storage Account Access Key"
+  #azureStorage:
+    #accountName: "Azure Storage Account Name"
+    #filesystem: "Azure Storage Account Blob Container"
+    #path: "/"
+    #credentials:
+      #accessKey: "Azure Storage Account Access Key"
 
     # Extra Properties
     # Use the extra properties block to provide additional parameters to configure the distributed
@@ -493,11 +493,11 @@ distStorage:
 
 # Extra Volumes
 # Array to add extra volumes to all Dremio resources.
-extraVolumes: []
+#extraVolumes: []
 
 # Extra Volume Mounts
 # Array to add extra volume mounts to all Dremio resources, normally used in conjunction wtih extraVolumes.
-extraVolumeMounts: []
+#extraVolumeMounts: []
 
 # Uncomment this value to write logs to a file on disk for all Dremio resources.
 #writeLogsToFile: true
@@ -505,7 +505,7 @@ extraVolumeMounts: []
 # Dremio Service
 # The dremio-client service exposes the service for access outside of the Kubernetes cluster.
 service:
-  type: LoadBalancer
+  type: NodePort
 
   # These values, when defined and not empty, override the provided shared annotations and labels.
   # Uncomment only if you are trying to override the chart's shared values.
