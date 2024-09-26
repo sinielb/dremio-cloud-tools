@@ -77,6 +77,15 @@ coordinator:
 
   # Uncomment this value to use a different storage class for the coordinator.
   storageClass: db-storage-retain
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: application
+                operator: In
+                values:
+                  - application
 
   # Uncomment this value to use a different storage class for the coordinator logs.
   #logStorageClass:
@@ -189,6 +198,15 @@ executor:
 
   # Uncomment this value to use a different storage class for executors.
   storageClass: db-storage-retain
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: application
+                operator: In
+                values:
+                  - application
 
   # Uncomment this value to use a different storage class for the coordinator logs.
   #logStorageClass:
@@ -410,6 +428,11 @@ distStorage:
     #credentials:
     #  accessKey: "AWS Access Key"
     #  secret: "AWS Secret"
+    secrets:
+       accessKey: zookeeper-secret
+       accessKeyKey: accessKey
+       secretKey: zookeeper-secret
+       secretKeyKey: secret
     #
     # If using awsProfile for authentication against S3, uncomment the lines below and use the values
     # to choose the appropriate profile.
